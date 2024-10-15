@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:13
+    hostname: postgres
+    environment:
+      POSTGRES_DB: etl
+      POSTGRES_USER: ali
+      POSTGRES_PASSWORD: "0000"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "9090:80"
+    depends_on:
+      - postgres
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+  airflow-test:
+    image: airflow-test:latest
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+    ports:
+      - "8080:8080"
+    command: airflow standalone
+    depends_on:
+      - postgres
+    volumes:
+      - ./airflow:/opt/airflow
+
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+

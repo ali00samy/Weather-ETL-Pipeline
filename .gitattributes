@@ -1,0 +1,9 @@
+# Ensure all text files use LF in the repository
+* text=auto
+
+# Force LF endings for specific files (like .sh, .py)
+*.py eol=lf
+*.sh eol=lf
+
+# Force binary files to be treated as-is (no conversion)
+*.pid -text
